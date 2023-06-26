@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B+ Tree</title>
+    <script src="./js/leaf.js"></script>
+    <script src="./js/node.js"></script>
+    <script src="./js/bplustree.js"></script>
+    <script src="./js/bplustree-draw.js"></script>
+    <link rel="stylesheet" type="text/css" href="./assets/index.css">
+
+</head>
+
+<body>
+    <div id="content">
+        <form name="actForm" id="actForm">
+            <div class="title">
+                <img src="./assets/ep.png" alt="logo" />
+                <h1>B + Tree</h1>
+            </div>
+            <br />
+
+            <div class="title formline">
+                <div class="formline">
+
+                    <label id="orderLabel" for="order">Order</label>
+                    <input name="order" id="order" size="40" maxlength="8" type="text" />
+                    <input id="btn" class="btn" value="Build new tree"
+                        onclick="runAct('bld', document.actForm.order.value)" type="button" />
+                </div>
+            </div>
+            <br />
+
+            <h2>Operations</h2>
+
+            <div class="showBox2">
+                <div class="showBox2-item">
+                    <h2>Insert</h2>
+                    <label id="labelInsert" for="insertValue">Add value</label>
+                    <input name="insertValue" id="insertValue" size="12" maxlength="8" type="text" />
+                    <input id="btn" class="btn" value="Go" onclick="runAct('add', document.actForm.insertValue.value)"
+                        type="button" />
+
+                </div>
+                <div class="showBox2-item">
+                    <h2>Insert Random</h2>
+
+                    <label id="labelRandom" for="randomValues"># of values</label>
+                    <input name="randomValues" id="randomValues" size="12" maxlength="8" type="text" />
+                    <input id="btn" class="btn" value="Go"
+                        onclick="runAct('random', document.actForm.randomValues.value)" type="button" />
+                </div>
+                <div class="showBox2-item">
+                    <h2>Search</h2>
+
+                    <label id="labelDelete" for="searchValue">Value</label>
+                    <input name="searchValue" id="searchValue" size="12" maxlength="8" type="text" />
+                    <input id="btn" class="btn" value="Go"
+                        onclick="runAct('search', document.actForm.searchValue.value)" type="button" />
+                </div>
+                <div class="showBox2-item">
+                    <h2>Delete</h2>
+
+                    <label id="labelDelete" for="deleteValue">Value</label>
+                    <input name="deleteValue" id="deleteValue" size="12" maxlength="8" type="text" />
+                    <input id="btn" class="btn" value="Go" onclick="runAct('del', document.actForm.deleteValue.value)"
+                        type="button" />
+                </div>
+            </div>
+
+        </form>
+
+        <div id="frDiv" style="display: none;">
+            <h2>From</h2>
+            <div class="showBox">
+                <div id="frMsg"></div>
+                <canvas id="frCanvas" width="40hv" height="40hv"></canvas>
+            </div>
+        </div>
+
+        <h2>Result</h2>
+        <div id="toValues"></div>
+        <div id="toDelete"></div>
+        <div id="toSearch"></div>
+
+        <div class="showBox">
+            <canvas id="toCanvas" width="1" height="1"></canvas>
+        </div>
+    </div>
+
+    <script>
+        let myTree = null; // Variable que almacenará el objeto del árbol B+
+        let pool = []; // Pool de números aleatorios generados
+        let values = []; // Valores almacenados en el árbol
+        let maxDisplay; // Valor máximo para la visualización del árbol
+        let isBusy = false; // Bandera para indicar si el árbol está ocupado
+
+        // Función que se ejecuta al realizar una acción
+        runAct = function (act, num) {
+            console.log(act, num);
+            if (isBusy) return;
+
+            num = parseInt(num, 10);
+            if (isNaN(num)) num = 0;
+
+            let txt = "";
+            let foc = "";
+
+            switch (act) {
+                case "error":
+                    break;
+                case "bld":
+                    myTree = new tree(num); // Se crea un nuevo árbol B+ con el orden especificado
+                    maxDisplay = num * 50;
+                    break;
+                case "add":
+                    myTree.insert(num, num); // Se inserta un valor en el árbol
+                    values.push(num);
+                    console.log({ values });
+                    foc = "insertValue";
+                    getElementByIdOrName("insertValue").value = "";
+                    break;
+                case "del":
+                    let valueToDelete = values.indexOf(num);
+                    if (valueToDelete > -1) {
+                        values.splice(valueToDelete, 1);
+                        myTree.remove(num); // Se elimina un valor específico del árbol
+                        getElementByIdOrName("toDelete").innerHTML = `Eliminación: El elemento ${num} se eliminó correctamente`;
+                    } else {
+                        getElementByIdOrName("toDelete").innerHTML = `Eliminación: El elemento ${num} NO fue encontrado`;
+
+                    }
+                    foc = "deleteValue";
+                    getElementByIdOrName("deleteValue").value = "";
+                    break;
+                case "search":
+                    let valueToSearch = values.indexOf(num);
+                    if (valueToSearch > -1) {
+                        myTree.search(num); // Se busca un valor en el árbol
+                        getElementByIdOrName("toSearch").innerHTML = `Búsqueda: El elemento ${num} está en la lista`;
+                    } else {
+                        getElementByIdOrName("toSearch").innerHTML = `Búsqueda: El elemento ${num}  NO está en la lista`;
+
+                    }
+                    foc = "searchValue";
+                    getElementByIdOrName("searchValue").value = "";
+                    break;
+                case "random":
+                    pool = [];
+                    values = [];
+                    pool = generateRandomNumbers(num); // Se generan números aleatorios y se almacenan en el pool
+                    let l = 0;
+                    while (pool.length > 0) {
+                        let valueToInsert = pool.pop();
+                        myTree.insert(valueToInsert, ""); // Se inserta cada número aleatorio en el árbol
+                        values.push(valueToInsert);
+                        if (!myTree.found) l++;
+                    }
+                    getElementByIdOrName("randomValues").value = "";
+                    break;
+            }
+
+            if (myTree !== null) {
+                if (txt.length == 0) txt = myTree.show("toCanvas");
+                else myTree.showoff("toCanvas");
+            }
+            getElementByIdOrName("toValues").innerHTML = `Valores del árbol: [${values.toString()}]`;
+            console.log({ values });
+        };
+
+        // Función para generar números aleatorios
+        function generateRandomNumbers(n, min = 1, max = 1000) {
+            const randomNumbers = [];
+
+            for (let i = 0; i < n; i++) {
+                const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+                randomNumbers.push(randomNum);
+            }
+            console.log(randomNumbers);
+            return randomNumbers;
+        };
+
+
+
+        // Función para obtener un elemento por su ID o nombre
+        function getElementByIdOrName(id) {
+            let element = document.getElementById(id);
+            if (!element) {
+                let elements = document.getElementsByName(id);
+                if (elements.length > 0) {
+                    element = elements[0];
+                }
+            }
+            return element;
+        }
+
+
+    </script>
+
+</body>
+
+</html>

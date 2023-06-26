@@ -1,0 +1,122 @@
+    HTML {
+        overflow-y: scroll;
+    }
+
+    BODY {
+        background-color: rgb(255, 255, 255);
+        text-align: left;
+        font-family: verdana, arial, sans-serif;
+        font-size: 10pt;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    #content {
+        background-color: white;
+        padding: 10px 8px 15px 8px;
+        position: relative;
+    }
+
+    h2 {
+        font-family: verdana, arial, sans-serif;
+        font-size: 10pt;
+        font-weight: bold;
+    }
+
+    .formbox {
+        padding: 15px 0px 15px 15px;
+        border: 1px solid #003366;
+    }
+
+    .formline {
+        padding: 5px 0px 5px 0px;
+    }
+
+    form label {
+        float: left;
+        padding: 4px 0px 0px 0px;
+        width: 90px;
+    }
+
+    form input,
+    textarea,
+    select {
+        padding: 3px 4px 3px 4px;
+        border: 1px solid #c0c0c0;
+        border-radius: 5px;
+        font-family: arial, sans-serif;
+        font-size: 10pt;
+    }
+
+    form input:focus,
+    textarea:focus,
+    select:focus {
+        box-shadow: 0 0 5px #9ecccc;
+    }
+
+    .btn {
+        color: #F6DEBA;
+        background: #9F6774;
+        border-radius: 4px 4px 4px 4px;
+        font-family: arial, sans-serif;
+        font-size: 10pt;
+        font-weight: bold;
+        padding: 2px 3px 2px 3px;
+        cursor: pointer;
+    }
+
+
+    TABLE {
+        border: 1px solid #c0c0c0;
+        border-spacing: 0px;
+        border-collapse: collapse;
+        font-family: arial, sans-serif;
+        font-size: 10pt;
+    }
+
+    /* This page CSS */
+
+    #actForm {
+        margin: 5px 10px 10px 10px;
+    }
+
+    .showBox {
+        margin: 5px 0px 15px 0px;
+        padding: 10px;
+        color: #000000;
+        background-color: #ffffff;
+        border: 1px solid #9F6774;
+        /* box-shadow: 6px 6px 6px #666; */
+        font-family: Arial;
+        font-size: 9pt;
+    }
+
+    .showBox2 {
+        display: flex;
+        justify-content: space-between;
+
+    }
+
+    .showBox2-item {
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #9F6774;
+        width: 20%;
+        margin: 5px 0px 15px 0px;
+    }
+
+    img {
+        max-width: 40px;
+        margin-right: 0.5rem;
+        background: var(--inputColor);
+        border-radius: 2px;
+        padding: 0.2rem;
+    }
+
+    .title{
+        display: flex;
+        justify-content: center;
+    }
